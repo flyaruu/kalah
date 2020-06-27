@@ -11,6 +11,7 @@ jobs:
         uses: maxday/quarkus-native-build-docker-action@1
         with:
           outputName: app-runner
+          executablePath: target/kalah-1.0-SNAPSHOT-runner
       - name: Upload native executable
         uses: actions/upload-artifact@v1
         with:
