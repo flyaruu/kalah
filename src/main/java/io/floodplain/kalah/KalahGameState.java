@@ -1,7 +1,5 @@
 package io.floodplain.kalah;
 
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import io.floodplain.kalah.internal.GameStateSerializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -9,11 +7,9 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
-@JsonSerialize(using = GameStateSerializer.class)
 public class KalahGameState {
 
     private static final Logger logger = LoggerFactory.getLogger(KalahGameState.class);
