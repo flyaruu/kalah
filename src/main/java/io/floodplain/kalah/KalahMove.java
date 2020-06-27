@@ -6,7 +6,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
 @Path("/kalah")
-public class KalahEndpoint {
+public class KalahMove {
 
     @GET
     @Produces(MediaType.TEXT_PLAIN)

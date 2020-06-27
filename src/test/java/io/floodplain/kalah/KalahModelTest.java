@@ -1,22 +1,16 @@
 package io.floodplain.kalah;
 
 import io.floodplain.kalah.KalahGameState.GameResult;
-import org.junit.jupiter.api.Assertions;
+import io.floodplain.kalah.KalahGameState.Player;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import static io.floodplain.kalah.KalahGameState.GameResult.*;
-import static io.restassured.RestAssured.given;
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.jupiter.api.Assertions.*;
-
-import org.junit.jupiter.api.Assertions.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.enterprise.inject.Stereotype;
 import java.net.MalformedURLException;
-import java.net.URL;
+
+import static io.floodplain.kalah.KalahGameState.GameResult.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class KalahModelTest {
 
@@ -25,7 +19,7 @@ public class KalahModelTest {
     private KalahGameState initialState = null;
     @BeforeEach
     public void setup() throws MalformedURLException {
-        initialState = new KalahGameState("123", new URL("http://bla"));
+        initialState = new KalahGameState("123", "http://somehost/");
     }
 
     @Test
@@ -41,7 +35,7 @@ public class KalahModelTest {
     public void testModelInitial() throws MalformedURLException {
 //        KalahGameState initialState = new KalahGameState("123", new URL("http://bla"));
         assertEquals("123", initialState.id);
-        assertEquals(new URL("http://bla"), initialState.gameURL);
+        assertEquals("http://somehost/", initialState.gameURL);
         initialState.pitSequence()
                 .filter(pit -> !(KalahGameState.isKalahForPlayer(pit,Player.PLAYER_ONE)))
                 .filter(pit -> !(KalahGameState.isKalahForPlayer(pit,Player.PLAYER_TWO)))
@@ -96,7 +90,7 @@ public class KalahModelTest {
 
     @Test
     public void testCustomModelResult() throws MalformedURLException {
-        KalahGameState state = new KalahGameState("123", new URL("http://bla"),new int[]{0,0,0,0,0,0},new int[]{0,0,0,0,0,0},0,10);
+        KalahGameState state = new KalahGameState("123","http://somehost/",new int[]{0,0,0,0,0,0},new int[]{0,0,0,0,0,0},0,10);
         GameResult result = state.winnerIsDecided();
         System.err.println("Result: "+result);
         assertEquals(PLAYER_TWO_WON,result);
@@ -104,7 +98,7 @@ public class KalahModelTest {
 
     @Test
     public void testLastMove() throws MalformedURLException, IllegalMoveException {
-        KalahGameState state = new KalahGameState("123", new URL("http://bla"),new int[]{0,0,0,0,0,1},new int[]{0,0,0,0,0,0},0,0);
+        KalahGameState state = new KalahGameState("123", "http://somehost/",new int[]{0,0,0,0,0,1},new int[]{0,0,0,0,0,0},0,0);
         System.err.println(state.describeState());
         GameResult result =  state.startMove(Player.PLAYER_ONE,"6");
         System.err.println(state.describeState());
@@ -113,14 +107,14 @@ public class KalahModelTest {
     }
     @Test
     public void testCustomDraw() throws MalformedURLException {
-        KalahGameState state = new KalahGameState("123", new URL("http://bla"),new int[]{0,0,0,0,0,0},new int[]{0,0,0,0,0,0},10,10);
+        KalahGameState state = new KalahGameState("123", "http://somehost/",new int[]{0,0,0,0,0,0},new int[]{0,0,0,0,0,0},10,10);
         GameResult result = state.winnerIsDecided();
         System.err.println("Result: "+result);
         assertEquals(DRAW,result);
     }
     @Test
     public void testInProgress() throws MalformedURLException {
-        KalahGameState state = new KalahGameState("123", new URL("http://bla"),new int[]{0,0,3,0,0,0},new int[]{0,0,0,5,0,0},0,10);
+        KalahGameState state = new KalahGameState("123", "http://somehost/",new int[]{0,0,3,0,0,0},new int[]{0,0,0,5,0,0},0,10);
         GameResult result = state.winnerIsDecided();
         System.err.println("Result: "+result);
         assertEquals(PLAYER_ONE_NEXT,result);
@@ -128,7 +122,7 @@ public class KalahModelTest {
 
     @Test
     public void testTakeOpponentsStones() throws MalformedURLException, IllegalMoveException {
-        KalahGameState state = new KalahGameState("123", new URL("http://bla"),new int[]{0,0,1,0,0,0},new int[]{0,0,5,0,0,0},0,10);
+        KalahGameState state = new KalahGameState("123","http://somehost/",new int[]{0,0,1,0,0,0},new int[]{0,0,5,0,0,0},0,10);
         System.err.println(state.describeState());
         state.startMove(Player.PLAYER_ONE,"3");
         System.err.println(state.describeState());

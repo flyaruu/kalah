@@ -3,7 +3,7 @@ package io.floodplain.kalah;
 import io.quarkus.test.junit.NativeImageTest;
 
 @NativeImageTest
-public class NativeKalahEndpointIT extends KalahEndpointTest {
+public class NativeKalahMoveIT extends KalahMoveTest {
 
     // Execute the same tests but in native mode.
 }

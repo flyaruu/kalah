@@ -5,8 +5,11 @@ import io.floodplain.kalah.internal.GameStateSerializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.net.URL;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
@@ -14,7 +17,9 @@ import java.util.stream.Stream;
 public class KalahGameState {
 
     private static final Logger logger = LoggerFactory.getLogger(KalahGameState.class);
-
+    public enum Player {
+        PLAYER_ONE,PLAYER_TWO
+    }
     public enum GameResult {
         PLAYER_ONE_NEXT,PLAYER_TWO_NEXT,PLAYER_ONE_WON,PLAYER_TWO_WON,DRAW
     }
@@ -39,13 +44,18 @@ public class KalahGameState {
     public static final int TOTAL_PITS = PITS*2 + 2;
 
     public final String id;
-    public final URL gameURL;
+    public final String gameURL;
+
     // Assume PLAYER_ONE goes first
+    // Technically not really necessary to keep track of which player is up now (we could leave that to the clients)
     private Player nextPlayer = Player.PLAYER_ONE;
+    // The pits and stones
     private final LinkedHashMap<String,Integer> state = new LinkedHashMap<>();
+
+    // Effectively final, custom runs to use in tests will disable verifying the number of stones, allowing easier testing
     private boolean skipStoneChecks = false;
 
-    public KalahGameState(String id, URL gameURL, int[] playerOnePits, int[] playerTwoPits, int playerOneKalah, int playerTwoKalah) {
+    public KalahGameState(String id, String gameURL, int[] playerOnePits, int[] playerTwoPits, int playerOneKalah, int playerTwoKalah) {
         this(id,gameURL);
         skipStoneChecks = true;
         int index = 1;
@@ -62,7 +72,7 @@ public class KalahGameState {
         state.put(PLAYER_TWO_KALAH,playerTwoKalah);
     }
 
-    public KalahGameState(String id, URL gameURL) {
+    public KalahGameState(String id, String gameURL) {
         this.id = id;
         this.gameURL = gameURL;
         pitSequence()
@@ -270,7 +280,8 @@ public class KalahGameState {
         }
         throw new IllegalArgumentException("Should not happen");
     }
-    public GameResult winnerIsDecided() {
+
+    GameResult winnerIsDecided() {
         int playerOneTotal = IntStream.rangeClosed(1,6).mapToObj(Integer::toString).map(this::valueForPit).reduce(0,(a,b)->a+b);
         int playerTwoTotal = IntStream.rangeClosed(8,13).mapToObj(Integer::toString).map(this::valueForPit).reduce(0,(a,b)->a+b);
         // endgame: If the 'home row' of one of the players is empty, the game is over
@@ -305,6 +316,21 @@ public class KalahGameState {
                 return PLAYER_TWO_KALAH;
         }
         throw new IllegalArgumentException("Bad player? "+player);
+    }
+
+    public Map<String,Object> status() {
+        Map<String,Object> result = new HashMap<>();
+        result.put("id",this.id);
+        result.put("url",this.gameURL.toString()+"/"+id);
+        Map<String,String> orderedHash = new LinkedHashMap<>();
+        this.state
+                 .entrySet()
+                 .stream()
+                .forEach(entry->orderedHash.put(entry.getKey(),Integer.toString(entry.getValue())));
+//                 .collect(Collectors.toUnmodifiableMap(entry->entry.getKey(),
+//                         entry->Integer.toString(entry.getValue())));
+        result.put("status",orderedHash);
+        return Collections.unmodifiableMap(result);
     }
 }
 

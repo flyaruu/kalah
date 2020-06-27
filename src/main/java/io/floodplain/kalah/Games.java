@@ -1,37 +1,58 @@
 package io.floodplain.kalah;
 
+import org.jboss.resteasy.annotations.jaxrs.PathParam;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Request;
 import javax.ws.rs.core.Response;
 import java.net.MalformedURLException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicLong;
 
 @Path("/games")
-@Produces(MediaType.APPLICATION_JSON)
-@Consumes(MediaType.APPLICATION_JSON)
 public class Games {
 
     private static final Logger logger = LoggerFactory.getLogger(Games.class);
+    public static final String GAMEURL = "http://localhost:8080/games/";
     // TODO move mutable state somewhere else
     private AtomicLong lastId = new AtomicLong(0);
     Map<String,KalahGameState> allStates = new HashMap<>();
+
     @POST
     @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Path("/")
     public Response createGame() throws MalformedURLException {
         String nextGame = generateNewId();
         logger.info("game id: "+nextGame);
-        KalahGameState state = new KalahGameState(nextGame,new URL("http://localhost:8080/games"));
+        KalahGameState state = new KalahGameState(nextGame,GAMEURL);
         allStates.put(nextGame, state);
-        return Response.ok(state).status(201).build();
+        Map<String,String> result = new HashMap<>();
+        result.put("id",nextGame);
+        result.put("url",GAMEURL+nextGame);
+        return Response.ok(result).status(201).build();
+    }
+
+    @PUT
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Path("/{gameId}/pits/{pitId}")
+    public Response executeMove(@PathParam String gameId, @PathParam String pitId) {
+        try {
+            KalahGameState state = allStates.get(gameId);
+            if(state==null) {
+                return Response.status(400,"Unknown game").build();
+            }
+            KalahGameState.Player currentPlayer = state.nextPlayer();
+            state.startMove(currentPlayer,pitId);
+            return Response.ok(state.status()).build();
+        } catch (Throwable e) {
+            logger.error("Error performing move",e);
+            return Response.status(400,"Invalid move").build();
+        }
     }
 
     private String generateNewId() {
