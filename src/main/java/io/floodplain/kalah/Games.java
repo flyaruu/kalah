@@ -19,7 +19,7 @@ public class Games {
     public static final String GAMEURL = "http://localhost:8080/games/";
     // TODO move mutable state somewhere else
     private AtomicLong lastId = new AtomicLong(0);
-    Map<String,KalahGameState> allStates = new HashMap<>();
+    Map<String, KalahGameEngine> allStates = new HashMap<>();
 
     @POST
     @Produces(MediaType.APPLICATION_JSON)
@@ -28,7 +28,7 @@ public class Games {
     public Response createGame() throws MalformedURLException {
         String nextGame = generateNewId();
         logger.info("game id: "+nextGame);
-        KalahGameState state = new KalahGameState(nextGame,GAMEURL);
+        KalahGameEngine state = new KalahGameEngine(nextGame,GAMEURL);
         allStates.put(nextGame, state);
         Map<String,String> result = new HashMap<>();
         result.put("id",nextGame);
@@ -42,11 +42,11 @@ public class Games {
     @Path("/{gameId}/pits/{pitId}")
     public Response executeMove(@PathParam String gameId, @PathParam String pitId) {
         try {
-            KalahGameState state = allStates.get(gameId);
+            KalahGameEngine state = allStates.get(gameId);
             if(state==null) {
                 return Response.status(400,"Unknown game").build();
             }
-            KalahGameState.Player currentPlayer = state.nextPlayer();
+            KalahGameEngine.Player currentPlayer = state.nextPlayer();
             state.startMove(currentPlayer,pitId);
             return Response.ok(state.status()).build();
         } catch (Throwable e) {

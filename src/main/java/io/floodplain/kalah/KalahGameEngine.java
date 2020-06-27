@@ -10,9 +10,9 @@ import java.util.Map;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
-public class KalahGameState {
+public class KalahGameEngine {
 
-    private static final Logger logger = LoggerFactory.getLogger(KalahGameState.class);
+    private static final Logger logger = LoggerFactory.getLogger(KalahGameEngine.class);
     public enum Player {
         PLAYER_ONE,PLAYER_TWO
     }
@@ -51,7 +51,7 @@ public class KalahGameState {
     // Effectively final, custom runs to use in tests will disable verifying the number of stones, allowing easier testing
     private boolean skipStoneChecks = false;
 
-    public KalahGameState(String id, String gameURL, int[] playerOnePits, int[] playerTwoPits, int playerOneKalah, int playerTwoKalah) {
+    public KalahGameEngine(String id, String gameURL, int[] playerOnePits, int[] playerTwoPits, int playerOneKalah, int playerTwoKalah) {
         this(id,gameURL);
         skipStoneChecks = true;
         int index = 1;
@@ -68,7 +68,7 @@ public class KalahGameState {
         state.put(PLAYER_TWO_KALAH,playerTwoKalah);
     }
 
-    public KalahGameState(String id, String gameURL) {
+    public KalahGameEngine(String id, String gameURL) {
         this.id = id;
         this.gameURL = gameURL;
         pitSequence()
