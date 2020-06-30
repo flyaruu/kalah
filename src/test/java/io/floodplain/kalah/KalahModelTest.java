@@ -17,6 +17,7 @@ public class KalahModelTest {
     private static final Logger logger = LoggerFactory.getLogger(KalahGameEngine.class);
 
     private KalahGameEngine initialState = null;
+
     @BeforeEach
     public void setup() throws MalformedURLException {
         initialState = new KalahGameEngine("123", "http://somehost/");
@@ -27,8 +28,8 @@ public class KalahModelTest {
 //        KalahGameState initialState = new KalahGameState("123", new URL("http://bla"));
         assertEquals(KalahGameEngine.PLAYER_ONE_KALAH, KalahGameEngine.kalahForPlayer(Player.PLAYER_ONE));
         assertEquals(KalahGameEngine.PLAYER_TWO_KALAH, KalahGameEngine.kalahForPlayer(Player.PLAYER_TWO));
-        KalahGameEngine.isKalahForPlayer(KalahGameEngine.PLAYER_ONE_KALAH,Player.PLAYER_ONE);
-        KalahGameEngine.isKalahForPlayer(KalahGameEngine.PLAYER_TWO_KALAH,Player.PLAYER_TWO);
+        KalahGameEngine.isKalahForPlayer(KalahGameEngine.PLAYER_ONE_KALAH, Player.PLAYER_ONE);
+        KalahGameEngine.isKalahForPlayer(KalahGameEngine.PLAYER_TWO_KALAH, Player.PLAYER_TWO);
     }
 
     @Test
@@ -37,8 +38,8 @@ public class KalahModelTest {
         assertEquals("123", initialState.id);
         assertEquals("http://somehost/", initialState.gameURL);
         initialState.pitSequence()
-                .filter(pit -> !(KalahGameEngine.isKalahForPlayer(pit,Player.PLAYER_ONE)))
-                .filter(pit -> !(KalahGameEngine.isKalahForPlayer(pit,Player.PLAYER_TWO)))
+                .filter(pit -> !(KalahGameEngine.isKalahForPlayer(pit, Player.PLAYER_ONE)))
+                .filter(pit -> !(KalahGameEngine.isKalahForPlayer(pit, Player.PLAYER_TWO)))
                 .forEach(pit -> assertEquals(6, initialState.valueForPit(pit)));
         String playerOneKalah = KalahGameEngine.kalahForPlayer(Player.PLAYER_ONE);
         assertEquals(0, initialState.valueForPit(playerOneKalah));
@@ -51,26 +52,26 @@ public class KalahModelTest {
     public void testModelSimpleMove() throws IllegalMoveException {
         Player upNext = initialState.nextPlayer();
         assertEquals(Player.PLAYER_ONE, upNext);
-        System.err.println (initialState.describeState());
-        GameResult next = initialState.startMove(initialState.nextPlayer(),"1");
-        System.err.println (initialState.describeState());
+        logger.info(initialState.describeState());
+        GameResult next = initialState.startMove(initialState.nextPlayer(), "1");
+        logger.info(initialState.describeState());
         // check if the stones have been removed from the initial pit
-        assertEquals(0,initialState.valueForPit("1"));
+        assertEquals(0, initialState.valueForPit("1"));
         // did end in the kalah, so player 1 to is up again:
-        assertEquals(PLAYER_ONE_NEXT,next);
-        next = initialState.startMove(initialState.nextPlayer(),"2");
-        System.err.println (initialState.describeState());
+        assertEquals(PLAYER_ONE_NEXT, next);
+        next = initialState.startMove(initialState.nextPlayer(), "2");
+        logger.info(initialState.describeState());
         // did end in the kalah, so player 2 is up now:
-        assertEquals(PLAYER_TWO_NEXT,next);
-        next = initialState.startMove(Player.PLAYER_TWO,"11");
-        System.err.println (initialState.describeState());
-        assertEquals(PLAYER_ONE_NEXT,next);
+        assertEquals(PLAYER_TWO_NEXT, next);
+        next = initialState.startMove(Player.PLAYER_TWO, "11");
+        logger.info(initialState.describeState());
+        assertEquals(PLAYER_ONE_NEXT, next);
         // player two kalah should be 1
-        assertEquals(1,initialState.valueForPit(KalahGameEngine.PLAYER_TWO_KALAH));
-        next = initialState.startMove(Player.PLAYER_ONE,"6");
-        System.err.println (initialState.describeState());
+        assertEquals(1, initialState.valueForPit(KalahGameEngine.PLAYER_TWO_KALAH));
+        next = initialState.startMove(Player.PLAYER_ONE, "6");
+        logger.info(initialState.describeState());
         // assert that the kalah of player two was skipped, so still one
-        assertEquals(1,initialState.valueForPit(KalahGameEngine.PLAYER_TWO_KALAH));
+        assertEquals(1, initialState.valueForPit(KalahGameEngine.PLAYER_TWO_KALAH));
     }
 
     @Test
@@ -78,7 +79,7 @@ public class KalahModelTest {
         Player upNext = initialState.nextPlayer();
         assertEquals(Player.PLAYER_ONE, upNext);
         GameResult next = initialState.startMove(initialState.nextPlayer(), "1");
-        System.err.println(initialState.describeState());
+        logger.info(initialState.describeState());
     }
 
     @Test
@@ -90,43 +91,46 @@ public class KalahModelTest {
 
     @Test
     public void testCustomModelResult() throws MalformedURLException {
-        KalahGameEngine state = new KalahGameEngine("123","http://somehost/",new int[]{0,0,0,0,0,0},new int[]{0,0,0,0,0,0},0,10);
+        KalahGameEngine state = new KalahGameEngine("123", "http://somehost/", new int[]{0, 0, 0, 0, 0, 0}, new int[]{0, 0, 0, 0, 0, 0}, 0, 10);
         GameResult result = state.winnerIsDecided();
-        System.err.println("Result: "+result);
-        assertEquals(PLAYER_TWO_WON,result);
+        logger.info("Result: " + result);
+        assertEquals(PLAYER_TWO_WON, result);
     }
 
     @Test
     public void testLastMove() throws MalformedURLException, IllegalMoveException {
-        KalahGameEngine state = new KalahGameEngine("123", "http://somehost/",new int[]{0,0,0,0,0,1},new int[]{0,0,0,0,0,0},0,0);
-        System.err.println(state.describeState());
-        GameResult result =  state.startMove(Player.PLAYER_ONE,"6");
-        System.err.println(state.describeState());
-        System.err.println("Result: "+result);
-        assertEquals(PLAYER_ONE_WON,result);
+        KalahGameEngine state = new KalahGameEngine("123", "http://somehost/", new int[]{0, 0, 0, 0, 0, 1}, new int[]{0, 0, 0, 0, 0, 0}, 0, 0);
+        logger.info(state.describeState());
+        GameResult result = state.startMove(Player.PLAYER_ONE, "6");
+        logger.info(state.describeState());
+        logger.info("Result: " + result);
+        assertEquals(PLAYER_ONE_WON, result);
     }
+
     @Test
     public void testCustomDraw() throws MalformedURLException {
-        KalahGameEngine state = new KalahGameEngine("123", "http://somehost/",new int[]{0,0,0,0,0,0},new int[]{0,0,0,0,0,0},10,10);
+        KalahGameEngine state = new KalahGameEngine("123", "http://somehost/", new int[]{0, 0, 0, 0, 0, 0}, new int[]{0, 0, 0, 0, 0, 0}, 10, 10);
         GameResult result = state.winnerIsDecided();
-        System.err.println("Result: "+result);
-        assertEquals(DRAW,result);
+        logger.info("Result: {}", result);
+        assertEquals(DRAW, result);
     }
+
     @Test
     public void testInProgress() throws MalformedURLException {
-        KalahGameEngine state = new KalahGameEngine("123", "http://somehost/",new int[]{0,0,3,0,0,0},new int[]{0,0,0,5,0,0},0,10);
+        KalahGameEngine state = new KalahGameEngine("123", "http://somehost/", new int[]{0, 0, 3, 0, 0, 0}, new int[]{0, 0, 0, 5, 0, 0}, 0, 10);
         GameResult result = state.winnerIsDecided();
-        System.err.println("Result: "+result);
-        assertEquals(PLAYER_ONE_NEXT,result);
+        logger.info("Result: {}", result);
+        assertEquals(PLAYER_ONE_NEXT, result);
     }
 
     @Test
     public void testTakeOpponentsStones() throws MalformedURLException, IllegalMoveException {
-        KalahGameEngine state = new KalahGameEngine("123","http://somehost/",new int[]{0,0,1,0,0,0},new int[]{0,0,5,0,0,0},0,10);
-        System.err.println(state.describeState());
-        state.startMove(Player.PLAYER_ONE,"3");
-        System.err.println(state.describeState());
+        KalahGameEngine state = new KalahGameEngine("123", "http://somehost/", new int[]{0, 0, 1, 0, 0, 0}, new int[]{0, 0, 5, 0, 0, 0}, 0, 10);
+        logger.info(state.describeState());
+        state.startMove(Player.PLAYER_ONE, "3");
+        logger.info(state.describeState());
     }
+
     @Test
     public void testCheckOpposite() throws MalformedURLException, IllegalMoveException {
         assertEquals("1", KalahGameEngine.oppositePit("13"));

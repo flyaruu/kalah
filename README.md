@@ -1,6 +1,6 @@
 # kalah project
 
-Hi Backbase, 
+Hi all, 
 
 This should show some of my coding capabilities.
 
@@ -8,6 +8,37 @@ For the core I've spent about 5 hours.
 Test coverage isn't 100% but decent.
 
 I'll spend some more time adding some goodies.
+
+It uses Maven. I'm more into gradle recently but it was a good opportunity to dust off my maven skills.
+
+Very basic:
+Testing:
+
+```bash
+mvn test
+```
+
+Run in dev mode using the quarkus hot-swapping runtime:
+```bash
+mvn quarkus:dev
+```
+(stop using ctrl-c, server runs on 8080)
+
+To run stand-alone
+```bash
+cd target
+java -jar kalah-1.1-SNAPSHOT-runner.jar
+```
+
+### Deploy to Google Cloud Run:
+mvn install -X -Dquarkus.native.container-build=true \
+    -Dquarkus.container-image.push=true \
+    -Dquarkus.container-image.name=kalah \
+    -Dquarkus.container-image.group=eu.gcr.io/kalah-281706
+
+
+Quarkus and GraalVM also allow for building native apps.
+
 
 Some Quarkus things:
 
