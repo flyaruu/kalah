@@ -4,14 +4,17 @@ Hi all,
 
 This should show some of my coding capabilities.
 
-For the core I've spent about 5 hours.
-Test coverage isn't 100% but decent.
+For the core I've spent about 6 hours.
+About a day more on Quarkus native, GCP and FireStore.
 
-I'll spend some more time adding some goodies.
+Test coverage isn't 100% but decent.
 
 It uses Maven. I'm more into gradle recently but it was a good opportunity to dust off my maven skills.
 
+## Requires
+Java 11
 
+## Usage
 Very basic:
 Testing:
 
