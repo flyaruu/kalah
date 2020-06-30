@@ -115,7 +115,7 @@ public class KalahGameEngine {
     public KalahGameEngine(String id, String gameURL, Map<String, Object> contents) {
         this.id = id;
         this.gameURL = gameURL;
-        this.state = contents.entrySet().stream().collect(Collectors.toMap(entry->entry.getKey(),entry->Integer.parseInt((String)entry.getValue())));
+        this.state = contents.entrySet().stream().collect(Collectors.toMap(entry -> entry.getKey(), entry -> Integer.parseInt((String) entry.getValue())));
     }
 
     Integer valueForPit(String pit) {
@@ -129,6 +129,7 @@ public class KalahGameEngine {
 
     /**
      * Describes the current game state as ascii art
+     *
      * @return
      */
     public String describeState() {
@@ -197,7 +198,7 @@ public class KalahGameEngine {
     }
 
     private static String nextPit(Player currentPlayer, String pit) {
-        logger.debug("next pit for player: {} and current pit: {}",currentPlayer, pit);
+        logger.debug("next pit for player: {} and current pit: {}", currentPlayer, pit);
         int current = Integer.parseInt(pit);
         String next = Integer.toString((current % TOTAL_PITS) + 1);
         logger.debug("Next pit: {}", next);
@@ -238,7 +239,7 @@ public class KalahGameEngine {
      */
     private GameResult distributeAfter(Player player, String pit, int stonesToDistribute) {
         int totalStones = state.values().stream().reduce(0, Integer::sum);
-        logger.debug("Distribute stones after pit: {} player: {} remaining stones: {} stones on the board: {}",pit,player,stonesToDistribute, totalStones);
+        logger.debug("Distribute stones after pit: {} player: {} remaining stones: {} stones on the board: {}", pit, player, stonesToDistribute, totalStones);
         // Last stone, end-of-turn logic resides here:
         if (stonesToDistribute == 0) {
             int totalOriginal = PITS * INITIAL_STONES * 2;

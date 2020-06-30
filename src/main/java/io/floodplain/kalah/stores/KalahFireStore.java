@@ -60,8 +60,8 @@ public class KalahFireStore implements KalahGameStorage {
             DocumentReference docRef = db.collection("games").document(id);
             try {
                 return docRef.get().get().getData();
-            } catch (InterruptedException|ExecutionException e) {
-                throw new IOException("Error querying game state",e);
+            } catch (InterruptedException | ExecutionException e) {
+                throw new IOException("Error querying game state", e);
             }
         } else {
             return fallback.load(id);
@@ -78,7 +78,7 @@ public class KalahFireStore implements KalahGameStorage {
                 docRef.update(newDoc).get();
                 docRef = db.collection("lastgame").document("lastid");
                 Long counter = (Long) docRef.get().get().get(FieldPath.of("id"));
-                if(counter==null) {
+                if (counter == null) {
                     throw new IOException("Error reading lastgame collection. Has the FireStore database been initialized properly?");
                 }
                 return Long.toString(counter);

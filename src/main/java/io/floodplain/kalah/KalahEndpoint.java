@@ -64,11 +64,11 @@ public class KalahEndpoint {
     @Consumes(MediaType.APPLICATION_JSON)
     @Path("/{gameId}/pits/{pitId}")
     public Response executeMove(@PathParam String gameId, @PathParam String pitId) {
-        if(gameId==null) {
-            return Response.status(400,"gameId required").build();
+        if (gameId == null) {
+            return Response.status(400, "gameId required").build();
         }
-        if(pitId==null) {
-            return Response.status(400,"pitId required").build();
+        if (pitId == null) {
+            return Response.status(400, "pitId required").build();
         }
         try {
             Map<String, Object> persisted = storageBackend.load(gameId);
@@ -76,7 +76,7 @@ public class KalahEndpoint {
                 return Response.status(400, "Unknown game").build();
             }
             String requestURI = (String) persisted.get(URL);
-            Map<String,Object> gameState = (Map<String, Object>) persisted.get(STATUS);
+            Map<String, Object> gameState = (Map<String, Object>) persisted.get(STATUS);
             KalahGameEngine state = new KalahGameEngine(gameId, requestURI, gameState);
             KalahGameEngine.Player currentPlayer = state.nextPlayer();
             state.startMove(currentPlayer, pitId);
