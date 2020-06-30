@@ -11,6 +11,7 @@ I'll spend some more time adding some goodies.
 
 It uses Maven. I'm more into gradle recently but it was a good opportunity to dust off my maven skills.
 
+
 Very basic:
 Testing:
 
@@ -30,17 +31,40 @@ cd target
 java -jar kalah-1.1-SNAPSHOT-runner.jar
 ```
 
-### Deploy to Google Cloud Run:
+### Deploy to Google Cloud Run (might lead to auth issues):
 mvn install -X -Dquarkus.native.container-build=true \
     -Dquarkus.container-image.push=true \
     -Dquarkus.container-image.name=kalah \
     -Dquarkus.container-image.group=eu.gcr.io/kalah-281706
 
 
-Quarkus and GraalVM also allow for building native apps.
+Quarkus and GraalVM also allow for building native apps, unfortunately the google-firestore client does not support that at this moment, it is a pity, as the native version starts much
+faster (which is nice for a scale-to-zero situation like I've set up here).
+Also, the native version easily fits in the smallest container instance (128Mb of memory), while the JVM based version needs 256Mb.
 
+Anyway, the JVM version runs here:
 
-Some Quarkus things:
+https://kalah-game-s5kyy5jiha-ez.a.run.app/games
+
+If there is an issue building you can also build the docker image manually:
+```bash
+mvn package
+docker build -f src/main/docker/Dockerfile.jvm -t flyaruu/kalah:1.2.0-SNAPSHOT .
+```
+And run it:
+```bash
+docker run -p 8080:8080 flyaruu/kalah:1.2.0-SNAPSHOT
+```
+
+## "Roadmap"
+Things that could be better (but I think I've spent enough time on this assignment for now)
+ - Add swagger API doc
+ - Add full CI/CD pipeline
+ - Build JavaDoc
+ - Add linter to build like CheckCode
+ 
+
+# Standard Quarkus build:
 
 This project uses Quarkus, the Supersonic Subatomic Java Framework.
 
